@@ -193,7 +193,7 @@ df_roll = pd.DataFrame({
     "ES 95 Hist": ES_95_hist,
     "ES 99 Hist": ES_99_hist
 }).dropna()
-
+st.header("Inciso (d):Rolling VaR y ES")
 st.subheader("Rolling VaR y ES")
 
 fig, ax = plt.subplots(figsize=(14,6))
@@ -266,11 +266,130 @@ En general:
 # INCISO (E)
 # ===============================
 
+st.header("Inciso (e)")
+
+# Total de observaciones
+n = len(df_roll)
+
+resultados_violaciones = []
+
+# Niveles
+niveles = ["95", "99"]
+
+for nivel in niveles:
+
+    # =========================
+    # VaR Normal
+    # =========================
+    var_norm = df_roll[f"VaR {nivel} Norm"]
+    viol_var_norm = (df_roll["Returns"] < var_norm).sum()
+
+    # =========================
+    # ES Normal
+    # =========================
+    es_norm = df_roll[f"ES {nivel} Norm"]
+    viol_es_norm = (df_roll["Returns"] < es_norm).sum()
+
+    # =========================
+    # VaR Histórico
+    # =========================
+    var_hist = df_roll[f"VaR {nivel} Hist"]
+    viol_var_hist = (df_roll["Returns"] < var_hist).sum()
+
+    # =========================
+    # ES Histórico
+    # =========================
+    es_hist = df_roll[f"ES {nivel} Hist"]
+    viol_es_hist = (df_roll["Returns"] < es_hist).sum()
+
+    resultados_violaciones.append({
+        "Nivel": f"{nivel}%",
+        
+        "Violaciones VaR Normal": viol_var_norm,
+        "% VaR Normal": viol_var_norm / n,
+        
+        "Violaciones ES Normal": viol_es_norm,
+        "% ES Normal": viol_es_norm / n,
+        
+        "Violaciones VaR Hist": viol_var_hist,
+        "% VaR Hist": viol_var_hist / n,
+        
+        "Violaciones ES Hist": viol_es_hist,
+        "% ES Hist": viol_es_hist / n
+    })
+
+# Crear tabla
+df_violaciones = pd.DataFrame(resultados_violaciones)
+
+# Formato porcentaje
+for col in df_violaciones.columns:
+    if "%" in col:
+        df_violaciones[col] = df_violaciones[col].apply(lambda x: f"{x:.2%}")
+
+st.dataframe(df_violaciones)
+
+# ===============================
+# INCISO (f)
+# ===============================
+st.header("Inciso (f): VaR con volatilidad móvil")
+
+returns = df_rendimientos[stock_seleccionado].dropna()
+
+window = 252
+
+# Volatilidad rolling (shift para evitar look-ahead)
+rolling_vol = returns.rolling(window).std().shift(1)
+
+# Cuantiles normales
+q_05 = norm.ppf(0.05)
+q_01 = norm.ppf(0.01)
+
+# VaR
+VaR_95_vol = q_05 * rolling_vol
+VaR_99_vol = q_01 * rolling_vol
+
+# DataFrame
+df_vol = pd.DataFrame({
+    "Returns": returns,
+    "VaR 95 Vol": VaR_95_vol,
+    "VaR 99 Vol": VaR_99_vol
+}).dropna()
+
+# Grafica
+st.subheader("VaR con volatilidad móvil vs Rendimientos")
+
+fig, ax = plt.subplots(figsize=(14,6))
+
+ax.plot(df_vol.index, df_vol["Returns"], label="Rendimientos", alpha=0.6)
+
+ax.plot(df_vol.index, df_vol["VaR 95 Vol"], label="VaR 95% (Volatilidad)")
+ax.plot(df_vol.index, df_vol["VaR 99 Vol"], label="VaR 99% (Volatilidad)")
+
+ax.axhline(0, linestyle='--')
+
+ax.set_title("VaR con volatilidad móvil (252 días)")
+ax.legend()
+
+st.pyplot(fig)
+
+# Violaviones 
+
+st.subheader("Violaciones del VaR (Volatilidad móvil)")
+
+n = len(df_vol)
+
+viol_95 = (df_vol["Returns"] < df_vol["VaR 95 Vol"]).sum()
+viol_99 = (df_vol["Returns"] < df_vol["VaR 99 Vol"]).sum()
+
+df_viol_vol = pd.DataFrame({
+    "Nivel": ["95%", "99%"],
+    "Violaciones": [viol_95, viol_99],
+    "Porcentaje": [viol_95/n, viol_99/n]
+})
+
+df_viol_vol["Porcentaje"] = df_viol_vol["Porcentaje"].apply(lambda x: f"{x:.2%}")
+
+st.dataframe(df_viol_vol)
 
 
 # streamlit run Proyecto_1_MCF_1.py
-
-
-
-
-
