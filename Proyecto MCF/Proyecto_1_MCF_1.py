@@ -153,8 +153,8 @@ if stock_seleccionado:
             "ES MonteCarlo": ES_mc
         })
 
-    df_resultados = pd.DataFrame(resultados)
-    df_resultados.iloc[:, 1:] = df_resultados.iloc[:, 1:].applymap(lambda x: f"{x:.4%}")
+    df_resultados = pd.DataFrame(resultados).map(lambda x: f"{x:.4%}")
+    df_resultados.iloc[:, 1:] = df_resultados.iloc[:, 1:]
 
     st.dataframe(df_resultados)
 
