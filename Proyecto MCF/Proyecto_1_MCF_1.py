@@ -228,7 +228,7 @@ st.subheader("Interpretación de VaR y ES (Rolling Window)")
 
 st.write("""
 El VaR (Value at Risk) y el ES (Expected Shortfall) fueron calculados utilizando ventanas móviles de 252 días,
-lo que permite analizar cómo evoluciona el riesgo del activo a lo largo del tiempo.
+lo que nos permite analizar cómo evoluciona el riesgo del activo a lo largo del tiempo.
 
 En la gráfica se comparan los rendimientos reales con las estimaciones de VaR y ES bajo dos enfoques:
 histórico y paramétrico (normal).
@@ -241,26 +241,38 @@ violaciones_99 = (df_roll["Returns"] < df_roll["VaR 99 Norm"]).sum()
 total = len(df_roll)
 
 st.write(f"""
-- Para un nivel de confianza del 95%, el VaR debería fallar aproximadamente el **5% del tiempo**.
+- Para un nivel de confianza del 95%, Teoricamente, las perdidas deberian exceder el VaR estimado el **5% del tiempo**.
   En este caso, se observaron **{violaciones_95} violaciones** de un total de **{total} observaciones**
   ({violaciones_95/total:.2%}).
 
-- Para un nivel de confianza del 99%, el VaR debería fallar aproximadamente el **1% del tiempo**.
-  En este caso, se observaron **{violaciones_99} violaciones**
+- Para un nivel de confianza del 99%, el umbral de tolerancia teorico es de el **1%**.
+En este caso, se observaron **{violaciones_99} violaciones**
   ({violaciones_99/total:.2%}).
+
+- Los resultados del backtesting nos dice que mientras que al 95% de confianza
+el modelo presenta una calibración aceptable ({violaciones_95/total:.2%}) numero de violaciones empíricas frente al 5% teórico), 
+al nivel del 99% el numero de violaciones observadas ({violaciones_99/total:.2%}) superan por más del doble la tolerancia esperada (1%).
 """)
 
 st.write("""
 Interpretación:
 
-- Cuando los rendimientos caen por debajo del VaR, se dice que ocurre una **violación**.
-- Si el número de violaciones es mayor al esperado, el modelo está subestimando el riesgo.
+- Cuando los rendimientos caen por debajo del VaR, se dice que ocurre una **Excepcion (VaR violations)**.
+- Si el número de excepciones es mayor al esperado, el modelo está subestimando el riesgo.
 - Si es menor, el modelo puede ser demasiado conservador.
 
 En general:
-- El VaR histórico suele capturar mejor eventos extremos.
-- El VaR paramétrico (normal) puede subestimar el riesgo en presencia de colas pesadas.
-- El ES es más conservador, ya que mide la pérdida promedio en los peores escenarios.
+
+*   **El VaR Parametrico (normal):** Este enfoque ajusta una distribución teórica. Sin embargo, los "hechos estilizados" 
+    de los activos financieros demuestran que los retornos no siguen una distribución normal; presentan asimetría y colas pesadas
+    (distribuciones leptocúrticas con curtosis $\kappa > 3$). Obligar a los datos a ajustarse a una curva normal genera "riesgo de modelo"
+    y subestima drásticamente la probabilidad de eventos extremos.
+*   **El VaR Histórico:** Al basarse completamente en la distribución empírica de los retornos pasados, 
+    este método evita el error de asumir normalidad. No obstante, tiene una debilidad teórica fundamental: "este método no es capaz de capturar valores extremos (si es que no existen en los datos)".
+    Es decir, si la ventana histórica no incluye un evento de estrés severo, el modelo asumirá equivocadamente que el riesgo de cola es inexistente.
+*   **Expected Shortfall (ES):** La principal desventaja del VaR es que "no considera los riesgos de cola"; solo indica el umbral,
+    pero ignora la magnitud de los valores extremos. El ES (o Conditional VaR) resuelve esto calculando matemáticamente el valor esperado de la pérdida.
+
 """)
 # ===============================
 # INCISO (E)
