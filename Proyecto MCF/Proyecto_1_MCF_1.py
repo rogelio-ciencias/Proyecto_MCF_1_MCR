@@ -22,7 +22,7 @@ def calcular_rendimientos(df):
     return df.pct_change().dropna()
 
 # Activo (S&P 100)
-stocks_lista = ['^OEX']
+stocks_lista = ['BZ=F']
 
 with st.spinner("Descargando datos..."):
     df_precios = obtener_datos(stocks_lista)
