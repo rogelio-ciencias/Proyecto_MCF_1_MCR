@@ -1,4 +1,11 @@
 # Proyecto_MCF_1_MCR
+
+De: 
+García Rodríguez Marco Antonio
+Mendoza Aragón Rogelio
+Moreno Ventura Miguel Angel
+Criss
+
 Para este primer proyecto elegimos al petróleo como activo a analizar, esto principalmente por su relevancia en el mercado actual, además de que es un activo que tiene muchas fluctuaciones (es muy volátil). 
 Vamos a usar medidas de riesgo como el VaR histórico y paramétrico (bajo diferentes distribuciones como la normal o t-student) y el Expected Shortfall con la finalidad de compararlas para conocer el riesgo real de nuestro activo.
 
