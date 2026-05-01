@@ -483,4 +483,3 @@ st.dataframe(df_viol_vol)
 # ----->para problemas con el directorio
 # cd "Proyecto MCF"
 # streamlit run Proyecto_1_MCF_1.py          
-# "c:\Users\crist\OneDrive\Documentos\Uni\Semestre 6\Proyecto_1_MCF_1.py"
