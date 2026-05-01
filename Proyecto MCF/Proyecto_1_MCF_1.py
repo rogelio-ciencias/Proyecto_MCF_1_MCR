@@ -8,10 +8,10 @@ import scipy.stats as stats
 from scipy.stats import kurtosis, skew, shapiro, norm
 
 st.title("Visualización de Rendimientos de Acciones")
-st.header("Proyecto  ")
-# ===============================
+st.header("Proyecto MCF")
+
 # INCISO (A)
-# ===============================
+
 @st.cache_data
 def obtener_datos(stocks):
     df = yf.download(stocks, start="2010-01-01")['Close']
@@ -21,7 +21,7 @@ def obtener_datos(stocks):
 def calcular_rendimientos(df):
     return df.pct_change().dropna()
 
-# Activo (S&P 100)
+# Activo "BZ=F" (petroleo)
 stocks_lista = ['BZ=F']
 
 with st.spinner("Descargando datos..."):
@@ -33,9 +33,9 @@ stock_seleccionado = st.selectbox("Selecciona una acción", stocks_lista)
 
 if stock_seleccionado:
 
-    # ===============================
+  
     # INCISO (b)
-    # ===============================
+    
     st.header("Inciso (b): Análisis estadístico")
 
     rendimiento_medio = df_rendimientos[stock_seleccionado].mean()
@@ -108,9 +108,8 @@ if stock_seleccionado:
     stats.probplot(df_rendimientos[stock_seleccionado], dist="norm", plot=ax)
     st.pyplot(fig)
 
-    # ===============================
     # INCISO (c)
-    # ===============================
+    
     st.header("Inciso (c): VaR y ES")
 
     returns = df_rendimientos[stock_seleccionado].dropna()
@@ -158,14 +157,14 @@ if stock_seleccionado:
 
     st.dataframe(df_resultados)
 
-# ===============================
+
 # INCISO (D)
-# ===============================
+
 window = 252
 
 # Rolling mean y std (pero desplazados)
-rolling_mean = returns.rolling(window).mean().shift(1)
-rolling_std = returns.rolling(window).std().shift(1)
+rolling_mean = returns.rolling(window).mean()
+rolling_std = returns.rolling(window).std()
 
 # VaR paramétrico normal
 VaR_95_norm = norm.ppf(0.05, rolling_mean, rolling_std)
@@ -175,11 +174,11 @@ ES_95_norm = rolling_mean - rolling_std * norm.pdf(norm.ppf(0.05)) / 0.05
 ES_99_norm = rolling_mean - rolling_std * norm.pdf(norm.ppf(0.01)) / 0.01
 
 #Var Historico
-VaR_95_hist = returns.rolling(window).quantile(0.05).shift(1)
-VaR_99_hist = returns.rolling(window).quantile(0.01).shift(1)
+VaR_95_hist = returns.rolling(window).quantile(0.05)
+VaR_99_hist = returns.rolling(window).quantile(0.01)
 
-ES_95_hist = returns.rolling(window).apply(lambda x: x[x <= np.quantile(x, 0.05)].mean()).shift(1)
-ES_99_hist = returns.rolling(window).apply(lambda x: x[x <= np.quantile(x, 0.01)].mean()).shift(1)
+ES_95_hist = returns.rolling(window).apply(lambda x: x[x <= np.quantile(x, 0.05)].mean())
+ES_99_hist = returns.rolling(window).apply(lambda x: x[x <= np.quantile(x, 0.01)].mean())
 
 
 df_roll = pd.DataFrame({
@@ -218,12 +217,7 @@ ax.legend()
 ax.set_title("Rolling VaR y ES (252 días)")
 st.pyplot(fig)
 
-# ===============================
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# Checar la interpretacion 
-# correcta (muy IA jajaja)
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# ===============================
+#Interpretacion
 st.subheader("Interpretación de VaR y ES (Rolling Window)")
 
 st.write("""
@@ -234,7 +228,7 @@ En la gráfica se comparan los rendimientos reales con las estimaciones de VaR y
 histórico y paramétrico (normal).
 """)
 
-# Violaciones del VaR (muy importante)
+# Violaciones del VaR 
 violaciones_95 = (df_roll["Returns"] < df_roll["VaR 95 Norm"]).sum()
 violaciones_99 = (df_roll["Returns"] < df_roll["VaR 99 Norm"]).sum()
 
@@ -274,9 +268,9 @@ En general:
     pero ignora la magnitud de los valores extremos. El ES (o Conditional VaR) resuelve esto calculando matemáticamente el valor esperado de la pérdida.
 
 """)
-# ===============================
+
 # INCISO (E)
-# ===============================
+
 
 st.header("Inciso (e)")
 
@@ -289,28 +283,20 @@ resultados_violaciones = []
 niveles = ["95", "99"]
 
 for nivel in niveles:
-
-    # =========================
+  
     # VaR Normal
-    # =========================
     var_norm = df_roll[f"VaR {nivel} Norm"]
     viol_var_norm = (df_roll["Returns"] < var_norm).sum()
 
-    # =========================
     # ES Normal
-    # =========================
     es_norm = df_roll[f"ES {nivel} Norm"]
     viol_es_norm = (df_roll["Returns"] < es_norm).sum()
 
-    # =========================
     # VaR Histórico
-    # =========================
     var_hist = df_roll[f"VaR {nivel} Hist"]
     viol_var_hist = (df_roll["Returns"] < var_hist).sum()
 
-    # =========================
     # ES Histórico
-    # =========================
     es_hist = df_roll[f"ES {nivel} Hist"]
     viol_es_hist = (df_roll["Returns"] < es_hist).sum()
 
@@ -340,17 +326,17 @@ for col in df_violaciones.columns:
 
 st.dataframe(df_violaciones)
 
-# ===============================
+
 # INCISO (f)
-# ===============================
+
 st.header("Inciso (f): VaR con volatilidad móvil")
 
 returns = df_rendimientos[stock_seleccionado].dropna()
 
 window = 252
 
-# Volatilidad rolling (shift para evitar look-ahead)
-rolling_vol = returns.rolling(window).std().shift(1)
+# Volatilidad rolling 
+rolling_vol = returns.rolling(window).std()
 
 # Cuantiles normales
 q_05 = norm.ppf(0.05)
@@ -384,7 +370,7 @@ ax.legend()
 
 st.pyplot(fig)
 
-# Violaviones 
+# Violaciones 
 
 st.subheader("Violaciones del VaR (Volatilidad móvil)")
 
