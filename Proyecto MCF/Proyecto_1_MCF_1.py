@@ -457,7 +457,8 @@ df_viol_vol["Porcentaje"] = df_viol_vol["Porcentaje"].apply(lambda x: f"{x:.2%}"
 
 st.dataframe(df_viol_vol)
 
-
+# para verlo bonito:
+# pip install streamlit --upgrade
 # streamlit run Proyecto_1_MCF_1.py
 # ----->para problemas con el directorio
 # cd "Proyecto MCF"
