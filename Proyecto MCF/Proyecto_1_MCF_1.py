@@ -11,9 +11,21 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 from scipy.stats import kurtosis, skew, shapiro, norm
 
-st.title("Visualización de Rendimientos de Acciones")
-st.header("Proyecto MCF")
+st.markdown("""
+<style>
+.stApp {
+    background-color: #d3edef;
+</style>
+""", unsafe_allow_html=True)
 
+st.markdown(
+    "<h1 style='color:#23627c;'>Visualización de Rendimientos de Acciones BZ=F</h1>",
+    unsafe_allow_html=True
+)
+st.markdown(
+    "<h2 style='color:#744d83;'>Proyecto Métodos Cuantitativos en Finanzas</h2>",
+    unsafe_allow_html=True
+)
 # INCISO (A)
 
 @st.cache_data
@@ -40,7 +52,10 @@ if stock_seleccionado:
   
     # INCISO (b)
     
-    st.header("Inciso (b): Análisis estadístico")
+    st.markdown(
+    "<h2 style='color:#744d83;'>Análisis Estadístico</h2>",
+    unsafe_allow_html=True
+    )
 
     rendimiento_medio = df_rendimientos[stock_seleccionado].mean()
     skewness = skew(df_rendimientos[stock_seleccionado])
@@ -52,7 +67,10 @@ if stock_seleccionado:
     col3.metric("Exceso de Curtosis", f"{exceso_kurtosis:.4f}")
 
     # Reporte
-    st.subheader("Reporte estadístico de rendimientos")
+    st.markdown(
+    "<h2 style='color:#744d83;'>Reporte Estadístico de Rendimientos</h2>",
+    unsafe_allow_html=True
+    )
 
     st.write(f"""
     Para el activo seleccionado (**{stock_seleccionado}**) se obtuvieron los siguientes resultados:
@@ -81,21 +99,34 @@ if stock_seleccionado:
         st.write("La distribución es similar a la normal.")
 
     # Gráfico
-    st.subheader(f"Gráfico de Rendimientos: {stock_seleccionado}")
+    st.markdown(
+    f"<h3 style='color:#23BBB7;'>Gráfico de Rendimientos: {stock_seleccionado}</h3>",
+    unsafe_allow_html=True
+    )
     fig, ax = plt.subplots(figsize=(13, 5))
-    ax.plot(df_rendimientos.index, df_rendimientos[stock_seleccionado])
-    ax.axhline(y=0, linestyle='--')
+    ax.plot(df_rendimientos.index, df_rendimientos[stock_seleccionado], color="teal", alpha=0.6)
+    ax.axhline(y=0, linestyle='--', color= "red")
+    fig.patch.set_facecolor("#F4E2F5")  
+    ax.set_facecolor("#E2EBF5")
     st.pyplot(fig)
 
     # Histograma
-    st.subheader("Distribución de Rendimientos")
+    st.markdown(
+    "<h3 style='color:#23BBB7;'>Distribución de Rendimientos</h3>",
+    unsafe_allow_html=True
+    )
     fig, ax = plt.subplots(figsize=(10, 5))
-    ax.hist(df_rendimientos[stock_seleccionado], bins=30)
-    ax.axvline(rendimiento_medio, linestyle='dashed')
+    ax.hist(df_rendimientos[stock_seleccionado], bins=30, color="teal", edgecolor="black", alpha=0.6)
+    ax.axvline(rendimiento_medio, linestyle='dashed', color="red")
+    fig.patch.set_facecolor("#F4E2F5")  
+    ax.set_facecolor("#E2EBF5")
     st.pyplot(fig)
 
     # Shapiro
-    st.subheader("Test de Normalidad (Shapiro-Wilk)")
+    st.markdown(
+    "<h3 style='color:#23BBB7;'>Test de Normalidad (Shapiro-Wilk)</h3>",
+    unsafe_allow_html=True
+    )
     stat, p = shapiro(df_rendimientos[stock_seleccionado])
 
     st.write(f"**Shapiro-Wilk Test Statistic:** {stat:.4f}")
@@ -107,14 +138,24 @@ if stock_seleccionado:
         st.error("La distribución NO es normal (Se rechaza H0)")
 
     # QQ plot
-    st.subheader("Q-Q Plot")
+    st.markdown(
+    "<h3 style='color:#23BBB7;'>Q-Q Plot</h3>",
+    unsafe_allow_html=True
+    )
     fig, ax = plt.subplots()
     stats.probplot(df_rendimientos[stock_seleccionado], dist="norm", plot=ax)
+    ax.get_lines()[0].set_markerfacecolor('#23BBB7')
+    ax.get_lines()[0].set_markeredgecolor('#23627C')
+    fig.patch.set_facecolor("#F4E2F5")  
+    ax.set_facecolor("#E2EBF5")
     st.pyplot(fig)
 
     # INCISO (c)
     
-    st.header("Inciso (c): VaR y ES")
+    st.markdown(
+    "<h2 style='color:#744d83;'>VaR y ES</h2>",
+    unsafe_allow_html=True
+    )
 
     returns = df_rendimientos[stock_seleccionado].dropna()
 
@@ -196,33 +237,44 @@ df_roll = pd.DataFrame({
     "ES 95 Hist": ES_95_hist,
     "ES 99 Hist": ES_99_hist
 }).dropna()
-st.header("Inciso (d):Rolling VaR y ES")
-st.subheader("Rolling VaR y ES")
+
+st.markdown(
+    "<h2 style='color:#744d83;'>Rolling Window</h2>",
+    unsafe_allow_html=True
+    )
+st.markdown(
+    "<h3 style='color:#23BBB7;'>Rolling VaR y ES</h3>",
+    unsafe_allow_html=True
+    )
 
 fig, ax = plt.subplots(figsize=(14,6))
 
-ax.plot(df_roll.index, df_roll["Returns"], label="Rendimientos", alpha=0.6)
+ax.plot(df_roll.index, df_roll["Returns"], label="Rendimientos", color="teal", alpha=0.6)
 
-ax.plot(df_roll.index, df_roll["VaR 95 Norm"], label="VaR 95% Normal")
-ax.plot(df_roll.index, df_roll["VaR 99 Norm"], label="VaR 99% Normal")
+ax.plot(df_roll.index, df_roll["VaR 95 Norm"], label="VaR 95% Normal", color="purple")
+ax.plot(df_roll.index, df_roll["VaR 99 Norm"], label="VaR 99% Normal", color="green")
 
-ax.plot(df_roll.index, df_roll["VaR 95 Hist"], label="VaR 95% Hist", linestyle='--')
-ax.plot(df_roll.index, df_roll["VaR 99 Hist"], label="VaR 99% Hist", linestyle='--')
+ax.plot(df_roll.index, df_roll["VaR 95 Hist"], label="VaR 95% Hist", linestyle='--', color="purple", alpha=0.8)
+ax.plot(df_roll.index, df_roll["VaR 99 Hist"], label="VaR 99% Hist", linestyle='--', color="green", alpha=0.8)
 
-ax.plot(df_roll.index, df_roll["ES 95 Norm"], label="ES 95% Normal", linestyle=':')
-ax.plot(df_roll.index, df_roll["ES 99 Norm"], label="ES 99% Normal", linestyle=':')
+ax.plot(df_roll.index, df_roll["ES 95 Norm"], label="ES 95% Normal", linestyle=':', color="purple", alpha=0.6)
+ax.plot(df_roll.index, df_roll["ES 99 Norm"], label="ES 99% Normal", linestyle=':', color="green", alpha=0.6)
 
-ax.plot(df_roll.index, df_roll["ES 95 Hist"], label="ES 95% Hist", linestyle='-.')
-ax.plot(df_roll.index, df_roll["ES 99 Hist"], label="ES 99% Hist", linestyle='-.')
+ax.plot(df_roll.index, df_roll["ES 95 Hist"], label="ES 95% Hist", linestyle='-.', color="purple", alpha=0.4)
+ax.plot(df_roll.index, df_roll["ES 99 Hist"], label="ES 99% Hist", linestyle='-.', color="green", alpha=0.4)
 
-ax.axhline(0, linestyle='--')
-
+ax.axhline(0, linestyle='--', color="red")
+fig.patch.set_facecolor("#F4E2F5")  
+ax.set_facecolor("#E2EBF5")
 ax.legend()
 ax.set_title("Rolling VaR y ES (252 días)")
 st.pyplot(fig)
 
 #Interpretacion
-st.subheader("Interpretación de VaR y ES (Rolling Window)")
+st.markdown(
+    "<h2 style='color:#744d83;'>Rolling Window</h2>",
+    unsafe_allow_html=True
+)
 
 st.write("""
 El VaR (Value at Risk) y el ES (Expected Shortfall) fueron calculados utilizando ventanas móviles de 252 días,
@@ -275,8 +327,10 @@ En general:
 
 # INCISO (E)
 
-
-st.header("Inciso (e)")
+st.markdown(
+    "<h2 style='color:#744d83;'>Violaciones del VaR</h2>",
+    unsafe_allow_html=True
+)
 
 # Total de observaciones
 n = len(df_roll)
@@ -333,7 +387,10 @@ st.dataframe(df_violaciones)
 
 # INCISO (f)
 
-st.header("Inciso (f): VaR con volatilidad móvil")
+st.markdown(
+    "<h2 style='color:#744d83;'>Volatilidad móvil</h2>",
+    unsafe_allow_html=True
+)
 
 returns = df_rendimientos[stock_seleccionado].dropna()
 
@@ -358,17 +415,21 @@ df_vol = pd.DataFrame({
 }).dropna()
 
 # Grafica
-st.subheader("VaR con volatilidad móvil vs Rendimientos")
+st.markdown(
+    "<h3 style='color:#23BBB7;'>VaR con Volatilidad Móvil vs Rendimientos</h3>",
+    unsafe_allow_html=True
+)
 
 fig, ax = plt.subplots(figsize=(14,6))
 
-ax.plot(df_vol.index, df_vol["Returns"], label="Rendimientos", alpha=0.6)
+ax.plot(df_vol.index, df_vol["Returns"], label="Rendimientos", color="teal", alpha=0.6)
 
-ax.plot(df_vol.index, df_vol["VaR 95 Vol"], label="VaR 95% (Volatilidad)")
-ax.plot(df_vol.index, df_vol["VaR 99 Vol"], label="VaR 99% (Volatilidad)")
+ax.plot(df_vol.index, df_vol["VaR 95 Vol"], label="VaR 95% (Volatilidad)", color="purple")
+ax.plot(df_vol.index, df_vol["VaR 99 Vol"], label="VaR 99% (Volatilidad)", color="green")
 
-ax.axhline(0, linestyle='--')
-
+ax.axhline(0, linestyle='--', color="red")
+fig.patch.set_facecolor("#F4E2F5")  
+ax.set_facecolor("#E2EBF5")
 ax.set_title("VaR con volatilidad móvil (252 días)")
 ax.legend()
 
@@ -376,7 +437,10 @@ st.pyplot(fig)
 
 # Violaciones 
 
-st.subheader("Violaciones del VaR (Volatilidad móvil)")
+st.markdown(
+    "<h3 style='color:#23BBB7;'>Violaciones del VaR con Volatilidad Móvil</h3>",
+    unsafe_allow_html=True
+)
 
 n = len(df_vol)
 
