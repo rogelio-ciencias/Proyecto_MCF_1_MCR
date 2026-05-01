@@ -9,6 +9,7 @@ import numpy as np
 import yfinance as yf
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import time
 from scipy.stats import kurtosis, skew, shapiro, norm
 
 st.markdown("""
@@ -40,7 +41,7 @@ def calcular_rendimientos(df):
 # Activo "BZ=F" (petroleo)
 stocks_lista = ['BZ=F']
 
-with st.spinner("Descargando datos..."):
+with st.spinner(f"Cargando datos..."): 
     df_precios = obtener_datos(stocks_lista)
     df_rendimientos = calcular_rendimientos(df_precios)
 
@@ -57,6 +58,9 @@ if stock_seleccionado:
     unsafe_allow_html=True
     )
 
+    with st.spinner(f"Cargando datos..."):
+        time.sleep(3)
+
     rendimiento_medio = df_rendimientos[stock_seleccionado].mean()
     skewness = skew(df_rendimientos[stock_seleccionado])
     exceso_kurtosis = kurtosis(df_rendimientos[stock_seleccionado], fisher=True)
@@ -71,7 +75,8 @@ if stock_seleccionado:
     "<h2 style='color:#744d83;'>Reporte Estadístico de Rendimientos</h2>",
     unsafe_allow_html=True
     )
-
+    with st.spinner(f"Cargando datos..."):
+        time.sleep(3)
     st.write(f"""
     Para el activo seleccionado (**{stock_seleccionado}**) se obtuvieron los siguientes resultados:
 
@@ -103,6 +108,8 @@ if stock_seleccionado:
     f"<h3 style='color:#23BBB7;'>Gráfico de Rendimientos: {stock_seleccionado}</h3>",
     unsafe_allow_html=True
     )
+    with st.spinner(f"Cargando datos..."):
+        time.sleep(3)
     fig, ax = plt.subplots(figsize=(13, 5))
     ax.plot(df_rendimientos.index, df_rendimientos[stock_seleccionado], color="teal", alpha=0.6)
     ax.axhline(y=0, linestyle='--', color= "red")
@@ -115,6 +122,8 @@ if stock_seleccionado:
     "<h3 style='color:#23BBB7;'>Distribución de Rendimientos</h3>",
     unsafe_allow_html=True
     )
+    with st.spinner(f"Cargando datos..."):
+        time.sleep(3)
     fig, ax = plt.subplots(figsize=(10, 5))
     ax.hist(df_rendimientos[stock_seleccionado], bins=30, color="teal", edgecolor="black", alpha=0.6)
     ax.axvline(rendimiento_medio, linestyle='dashed', color="red")
@@ -127,6 +136,8 @@ if stock_seleccionado:
     "<h3 style='color:#23BBB7;'>Test de Normalidad (Shapiro-Wilk)</h3>",
     unsafe_allow_html=True
     )
+    with st.spinner(f"Cargando datos..."):
+        time.sleep(3)
     stat, p = shapiro(df_rendimientos[stock_seleccionado])
 
     st.write(f"**Shapiro-Wilk Test Statistic:** {stat:.4f}")
@@ -142,6 +153,8 @@ if stock_seleccionado:
     "<h3 style='color:#23BBB7;'>Q-Q Plot</h3>",
     unsafe_allow_html=True
     )
+    with st.spinner(f"Cargando datos..."):
+        time.sleep(3)
     fig, ax = plt.subplots()
     stats.probplot(df_rendimientos[stock_seleccionado], dist="norm", plot=ax)
     ax.get_lines()[0].set_markerfacecolor('#23BBB7')
@@ -156,7 +169,8 @@ if stock_seleccionado:
     "<h2 style='color:#744d83;'>VaR y ES</h2>",
     unsafe_allow_html=True
     )
-
+    with st.spinner(f"Cargando datos..."):
+        time.sleep(3)
     returns = df_rendimientos[stock_seleccionado].dropna()
 
     alphas = [0.95, 0.975, 0.99]
@@ -246,7 +260,8 @@ st.markdown(
     "<h3 style='color:#23BBB7;'>Rolling VaR y ES</h3>",
     unsafe_allow_html=True
     )
-
+with st.spinner(f"Cargando datos..."):
+    time.sleep(3)
 fig, ax = plt.subplots(figsize=(14,6))
 
 ax.plot(df_roll.index, df_roll["Returns"], label="Rendimientos", color="teal", alpha=0.6)
@@ -275,7 +290,8 @@ st.markdown(
     "<h2 style='color:#744d83;'>Rolling Window</h2>",
     unsafe_allow_html=True
 )
-
+with st.spinner(f"Cargando datos..."):
+    time.sleep(3)
 st.write("""
 El VaR (Value at Risk) y el ES (Expected Shortfall) fueron calculados utilizando ventanas móviles de 252 días,
 lo que nos permite analizar cómo evoluciona el riesgo del activo a lo largo del tiempo.
@@ -331,6 +347,9 @@ st.markdown(
     "<h2 style='color:#744d83;'>Violaciones del VaR</h2>",
     unsafe_allow_html=True
 )
+
+with st.spinner(f"Cargando datos..."):
+    time.sleep(3)
 
 # Total de observaciones
 n = len(df_roll)
@@ -419,7 +438,8 @@ st.markdown(
     "<h3 style='color:#23BBB7;'>VaR con Volatilidad Móvil vs Rendimientos</h3>",
     unsafe_allow_html=True
 )
-
+with st.spinner(f"Cargando datos..."):
+    time.sleep(3)
 fig, ax = plt.subplots(figsize=(14,6))
 
 ax.plot(df_vol.index, df_vol["Returns"], label="Rendimientos", color="teal", alpha=0.6)
@@ -441,7 +461,8 @@ st.markdown(
     "<h3 style='color:#23BBB7;'>Violaciones del VaR con Volatilidad Móvil</h3>",
     unsafe_allow_html=True
 )
-
+with st.spinner(f"Cargando datos..."):
+    time.sleep(3)
 n = len(df_vol)
 
 viol_95 = (df_vol["Returns"] < df_vol["VaR 95 Vol"]).sum()
@@ -457,9 +478,9 @@ df_viol_vol["Porcentaje"] = df_viol_vol["Porcentaje"].apply(lambda x: f"{x:.2%}"
 
 st.dataframe(df_viol_vol)
 
-# para verlo bonito:
-# pip install streamlit --upgrade
+
 # streamlit run Proyecto_1_MCF_1.py
 # ----->para problemas con el directorio
 # cd "Proyecto MCF"
 # streamlit run Proyecto_1_MCF_1.py          
+# "c:\Users\crist\OneDrive\Documentos\Uni\Semestre 6\Proyecto_1_MCF_1.py"
