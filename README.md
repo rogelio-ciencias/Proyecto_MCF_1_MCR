@@ -10,7 +10,3 @@ Por ejemplo, cuando α= 0.95, el VaR Normal=-3.74%, esto nos dice que en el 95% 
 
 Para los incisos d, e y f, aplicamos ventanas móviles de 252 días con el fin de evaluar dinámicamente el riesgo y realizar el backtesting de nuestros modelos. Al analizar las violaciones, observamos que mientras el modelo normal al 95% presenta una calibración aceptable con un 5.26% de excepciones, al nivel del 99% el número de fallos (2.09%) supera por más del doble la tolerancia esperada, lo que nos indica una clara subestimación del riesgo extremo y la presencia de riesgo de modelo. Incluso cuando intentamos corregir esto ajustando el VaR por volatilidad móvil en el inciso f, encontramos que las violaciones al 99% siguen siendo elevadas (2.14%), lo que nos confirma que la asimetría y las colas pesadas de nuestro activo requieren modelos más robustos que la simple distribución normal para capturar los eventos de estrés rea
 
-(Viendo si dejar solo el ejemplo de la Normal o hablar igual de estos datos
-VaR t-student=-3.23%, ES t-student=-5.1316%, VaR Histórico=-3.52%,
-ES Histórico=-5.47%, VaR Monte Carlo=-3.74%, ES Monte Carlo=-4.71%
-)
