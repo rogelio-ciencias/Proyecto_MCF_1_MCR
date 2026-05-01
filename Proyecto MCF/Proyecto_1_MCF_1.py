@@ -395,4 +395,6 @@ st.dataframe(df_viol_vol)
 
 
 # streamlit run Proyecto_1_MCF_1.py
-# cd "Proyecto MCF" streamlit run Proyecto_1_MCF_1.py ----->para problemas con el directorio
+----->para problemas con el directorio
+# cd "Proyecto MCF"
+# streamlit run Proyecto_1_MCF_1.py          
