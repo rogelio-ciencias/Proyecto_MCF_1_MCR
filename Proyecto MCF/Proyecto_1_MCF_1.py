@@ -1,4 +1,8 @@
 # Proyecto_1_MCF_1
+#García Rodríguez Marco Antonio
+#Mendoza Aragón Rogelio
+#Moreno Ventura Miguel Angel
+#Criss
 import streamlit as st
 import pandas as pd
 import numpy as np
