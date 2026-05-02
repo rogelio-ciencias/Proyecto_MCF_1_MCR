@@ -1,6 +1,6 @@
 # Proyecto_MCF_1_MCR
 
-De: 
+Equipo  var-istas: 
 
 García Rodríguez Marco Antonio
 
