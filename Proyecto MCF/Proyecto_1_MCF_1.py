@@ -17,19 +17,27 @@ st.markdown("""
 .stApp {
     background-color: #d3edef;
     color: black;
+}
+
+
+[data-testid="stMetricLabel"], [data-testid="stMetricValue"] {
+    color: black !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown(
-    "<h1 style='color:#23627c;'>Visualización de Rendimientos de Acciones BZ=F</h1>",
+    "<h1 style='color:black;'>Visualización de Rendimientos de Acciones BZ=F</h1>",
     unsafe_allow_html=True
 )
+
 st.markdown(
-    "<h2 style='color:#744d83;'>Proyecto Métodos Cuantitativos en Finanzas</h2>",
+    "<h2 style='color:black;'>Proyecto Métodos Cuantitativos en Finanzas</h2>",
     unsafe_allow_html=True
 )
+
 st.markdown(
-    "<h2 style='color:#744d83;'>Equipo Var-istas</h2>",
+    "<h2 style='color:black;'>Equipo Var-istas</h2>",
     unsafe_allow_html=True
 )
 # INCISO (A)
