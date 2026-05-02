@@ -27,6 +27,10 @@ st.markdown(
     "<h2 style='color:#744d83;'>Proyecto Métodos Cuantitativos en Finanzas</h2>",
     unsafe_allow_html=True
 )
+st.markdown(
+    "<h2 style='color:#744d83;'>Equipo Var-istas</h2>",
+    unsafe_allow_html=True
+)
 # INCISO (A)
 
 @st.cache_data
